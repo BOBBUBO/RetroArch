@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=RetroArch
+GenericName=Emulator
+Comment=RetroArch - Libretro frontend
+Exec=retroarch
+Icon=com.libretro.retroarch
+Terminal=false
+Type=Application
+Categories=Game;Emulator;
+X-Ubuntu-Touch=true

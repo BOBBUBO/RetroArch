@@ -1,0 +1,151 @@
+name: CI Ubuntu Touch
+
+on:
+  push:
+    tags-ignore:
+      - '*'
+    branches:
+      - '*'
+  pull_request:
+  release:
+    types: [ published ]
+  repository_dispatch:
+    types: [ run_build ]
+
+env:
+  PACKAGE_NAME: com.libretro.retroarch
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v7
+
+      - name: Enable multiarch
+        run: |
+          sudo dpkg --add-architecture arm64
+          sudo dpkg --add-architecture armhf
+
+      - name: Update package index
+        timeout-minutes: 5
+        run: |
+          for i in 1 2 3; do
+            sudo timeout 90 apt-get -yq update \
+              -o Acquire::Retries=3 -o Acquire::http::Timeout=30 && break
+            echo "apt-get update failed (attempt $i); retrying in 10s"
+            sleep 10
+          done
+
+      - name: Install Ubuntu cross toolchains and target libraries
+        timeout-minutes: 10
+        run: |
+          sudo apt-get -yq install \
+            -o Acquire::Retries=3 -o Acquire::http::Timeout=30 \
+            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+            libegl1-mesa-dev:arm64 libgles2:arm64 \
+            libsdl2-dev:arm64 libfreetype-dev:arm64 libfontconfig1-dev:arm64 \
+            libudev-dev:arm64 libxkbcommon-dev:arm64 libpulse-dev:arm64 \
+            libpng-dev:arm64 libjpeg-turbo8-dev:arm64 zlib1g-dev:arm64 \
+            libegl1-mesa-dev:armhf libgles2:armhf \
+            libsdl2-dev:armhf libfreetype-dev:armhf libfontconfig1-dev:armhf \
+            libudev-dev:armhf libxkbcommon-dev:armhf libpulse-dev:armhf \
+            libpng-dev:armhf libjpeg-turbo8-dev:armhf zlib1g-dev:armhf
+
+      - name: Restore ccache
+        uses: actions/cache/restore@v4
+        with:
+          path: .ccache
+          key: ccache-${{ github.workflow }}-${{ github.job }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ github.workflow }}-${{ github.job }}-
+
+      - name: Set up ccache
+        run: |
+          command -v ccache > /dev/null || {
+            s=$(command -v sudo || true)
+            for i in 1 2 3; do
+              $s timeout 90 apt-get -yq update \
+                -o Acquire::Retries=3 -o Acquire::http::Timeout=30 &&
+              $s timeout 120 apt-get -yq install --no-install-recommends \
+                ccache > /dev/null && break
+              echo "installing ccache failed (attempt $i); retrying in 10s"
+              sleep 10
+            done
+          }
+          echo "CCACHE_DIR=$GITHUB_WORKSPACE/.ccache" >> "$GITHUB_ENV"
+          echo "CCACHE_MAXSIZE=250M" >> "$GITHUB_ENV"
+          if command -v ccache > /dev/null; then
+            CCACHE_DIR="$GITHUB_WORKSPACE/.ccache" ccache -z
+          fi
+
+      - name: Load RARCH_VERSION from version.all
+        id: version
+        shell: bash
+        run: |
+          RARCH_VERSION=$(grep -Po '(?<=#define PACKAGE_VERSION ")[^"]+' version.all)
+          echo "RARCH_VERSION=$RARCH_VERSION" >> "$GITHUB_ENV"
+
+      - name: Compile RA (arm64)
+        shell: bash
+        run: |
+          make -f Makefile.ut clean CROSS_COMPILE=aarch64-linux-gnu-
+          bash .github/workflows/scripts/ccache-make.sh -f Makefile.ut click CROSS_COMPILE=aarch64-linux-gnu- \
+            -j"$(getconf _NPROCESSORS_ONLN)"
+        env:
+          DEBUG: ${{ github.event_name == 'release' && '0' || '1' }}
+
+      - name: Compile RA (armhf)
+        shell: bash
+        run: |
+          make -f Makefile.ut clean CROSS_COMPILE=arm-linux-gnueabihf-
+          bash .github/workflows/scripts/ccache-make.sh -f Makefile.ut click CROSS_COMPILE=arm-linux-gnueabihf- \
+            -j"$(getconf _NPROCESSORS_ONLN)"
+        env:
+          DEBUG: ${{ github.event_name == 'release' && '0' || '1' }}
+
+      - name: ccache statistics
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: ccache -sv || ccache -s
+
+      - name: Save ccache
+        # Only master's pushes keep a cache: pull requests restore
+        # master's, so one push does not evict the next one's.
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/cache/save@v4
+        with:
+          path: .ccache
+          key: ccache-${{ github.workflow }}-${{ github.job }}-${{ github.sha }}
+
+      - name: Upload arm64 artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_${{ github.sha }}_arm64.click
+          path: ut/${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_arm64.click
+          archive: false
+
+      - name: Upload armhf artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_${{ github.sha }}_armhf.click
+          path: ut/${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_armhf.click
+          archive: false
+
+      - name: Release
+        if: github.event_name == 'release'
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.event.release.tag_name }}
+          allowUpdates: true
+          omitNameDuringUpdate: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          artifacts: |
+            ut/${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_arm64.click
+            ut/${{ env.PACKAGE_NAME }}_${{ env.RARCH_VERSION }}_armhf.click

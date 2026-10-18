@@ -1,0 +1,10 @@
+#include <tunables/global>
+
+profile com.libretro.retroarch {
+  #include <abstractions/ubuntu-touch>
+
+  # User configuration, saves and caches.
+  @{HOME}/.config/retroarch/** rwk,
+  @{HOME}/.local/share/retroarch/** rwk,
+  @{HOME}/.cache/retroarch/** rwk,
+}

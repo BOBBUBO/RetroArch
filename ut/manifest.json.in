@@ -1,0 +1,15 @@
+{
+  "name": "com.libretro.retroarch",
+  "title": "RetroArch",
+  "maintainer": "RetroArch",
+  "description": "RetroArch - Libretro frontend",
+  "version": "@PACKAGE_VERSION@",
+  "framework": "ubuntu-sdk-24.04",
+  "architecture": ["@CLICK_ARCH@"],
+  "hooks": {
+    "retroarch": {
+      "apparmor": "com.libretro.retroarch.apparmor",
+      "desktop": "com.libretro.retroarch.desktop"
+    }
+  }
+}
