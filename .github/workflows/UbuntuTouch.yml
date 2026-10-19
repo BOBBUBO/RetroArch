@@ -84,6 +84,13 @@ jobs:
             libudev-dev:armhf libxkbcommon-dev:armhf libpulse-dev:armhf \
             libpng-dev:armhf libjpeg-turbo8-dev:armhf zlib1g-dev:armhf
 
+      - name: Create cross compiler symlinks for ccache
+        run: |
+          sudo ln -sf aarch64-linux-gnu-gcc-13 /usr/bin/aarch64-linux-gnu-gcc
+          sudo ln -sf aarch64-linux-gnu-g++-13 /usr/bin/aarch64-linux-gnu-g++
+          sudo ln -sf arm-linux-gnueabihf-gcc-13 /usr/bin/arm-linux-gnueabihf-gcc
+          sudo ln -sf arm-linux-gnueabihf-g++-13 /usr/bin/arm-linux-gnueabihf-g++
+
       - name: Restore ccache
         uses: actions/cache/restore@v4
         with:
