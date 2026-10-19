@@ -39,13 +39,13 @@ jobs:
             sudo sed -i -e 's#mirror+file:/etc/apt/apt-mirrors.txt#http://archive.ubuntu.com/ubuntu/#g' \
               -e 's#http://azure\.archive\.ubuntu\.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' "$f"
           done
-          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\n' \
+          printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\n' \
             | sudo tee /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
-          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse\n' \
+          printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse\n' \
             | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
-          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-backports main restricted universe multiverse\n' \
+          printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble-backports main restricted universe multiverse\n' \
             | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
-          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse\n' \
+          printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse\n' \
             | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
 
       - name: Update package index
