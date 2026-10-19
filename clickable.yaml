@@ -1,8 +1,0 @@
-title: RetroArch
-author: RetroArch Team
-description: RetroArch - Libretro frontend
-name: com.libretro.retroarch
-framework: ubuntu-sdk-24.04
-arch: [arm64, armhf]
-build_command: make -f Makefile.ut click CROSS_COMPILE=${ARCH_TRIPLET}-
-target: ubuntu-touch

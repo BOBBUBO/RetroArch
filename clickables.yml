@@ -1,0 +1,5 @@
+name: com.libretro.retroarch
+title: RetroArch
+author: RetroArch Team
+description: RetroArch - Libretro frontend
+framework: ubuntu-sdk-24.04
