@@ -301,13 +301,14 @@ click: $(TARGET)
 	  $(STRIP) $(TARGET); \
 	fi
 	cp $(TARGET) ut/dist/retroarch
+	chmod +x ut/dist/retroarch
 	cp ut/icon.png ut/dist/com.libretro.retroarch.png
 	cp ut/com.libretro.retroarch.desktop ut/dist/
 	cp ut/com.libretro.retroarch.apparmor ut/dist/
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \
 	    -e "s/@CLICK_ARCH@/$(CLICK_ARCH)/" \
 	    ut/manifest.json.in > ut/dist/manifest.json
-	cd ut/dist && tar -cJf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
+	cd ut/dist && tar -cf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
 	    manifest.json retroarch com.libretro.retroarch.desktop \
 	    com.libretro.retroarch.apparmor com.libretro.retroarch.png
 	@echo "Click package: ut/$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click"
