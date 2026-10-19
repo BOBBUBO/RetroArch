@@ -3,3 +3,5 @@ title: RetroArch
 author: RetroArch Team
 description: RetroArch - Libretro frontend
 framework: ubuntu-sdk-24.04
+builder: custom
+build: make -f ${ROOT}/Makefile.ut click CROSS_COMPILE=${ARCH_TRIPLET}-
