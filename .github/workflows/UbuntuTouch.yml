@@ -31,13 +31,22 @@ jobs:
           sudo dpkg --add-architecture arm64
           sudo dpkg --add-architecture armhf
 
-      - name: Fix apt mirrors for cross packages
+      - name: Configure apt sources for cross packages
         run: |
+          # archive.ubuntu.com only serves amd64/i386; arm64/armhf indexes live on ports.ubuntu.com
           for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do
             [ -f "$f" ] || continue
             sudo sed -i -e 's#mirror+file:/etc/apt/apt-mirrors.txt#http://archive.ubuntu.com/ubuntu/#g' \
               -e 's#http://azure\.archive\.ubuntu\.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' "$f"
           done
+          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\n' \
+            | sudo tee /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
+          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
+          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-backports main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
+          printf 'deb http://ports.ubuntu.com/ubuntu-ports noble-security main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
 
       - name: Update package index
         timeout-minutes: 5
@@ -54,8 +63,8 @@ jobs:
         run: |
           sudo apt-get -yq install \
             -o Acquire::Retries=3 -o Acquire::http::Timeout=30 \
-            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+            gcc-13-aarch64-linux-gnu g++-13-aarch64-linux-gnu \
+            gcc-13-arm-linux-gnueabihf g++-13-arm-linux-gnueabihf \
             libegl1-mesa-dev:arm64 libgles2:arm64 \
             libsdl2-dev:arm64 libfreetype-dev:arm64 libfontconfig1-dev:arm64 \
             libudev-dev:arm64 libxkbcommon-dev:arm64 libpulse-dev:arm64 \
