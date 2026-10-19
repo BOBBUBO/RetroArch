@@ -1,10 +1,15 @@
 #include <tunables/global>
 
 profile com.libretro.retroarch {
-  #include <abstractions/ubuntu-touch>
+  #include <abstractions/base>
 
   # User configuration, saves and caches.
   @{HOME}/.config/retroarch/** rwk,
   @{HOME}/.local/share/retroarch/** rwk,
   @{HOME}/.cache/retroarch/** rwk,
+
+  # Allow basic system access needed by an emulator.
+  @{PROC}/*/fd r,
+  /dev/gpu/* rw,
+  /dev/dri/* rw,
 }
