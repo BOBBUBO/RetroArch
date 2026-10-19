@@ -41,6 +41,14 @@ jobs:
             sleep 10
           done
 
+      - name: Fix apt mirrors for cross packages
+        run: |
+          for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do
+            [ -f "$f" ] || continue
+            sudo sed -i -e 's#mirror+file:/etc/apt/apt-mirrors.txt#http://archive.ubuntu.com/ubuntu/#g' \
+              -e 's#http://azure\.archive\.ubuntu\.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' "$f"
+          done
+
       - name: Install Ubuntu cross toolchains and target libraries
         timeout-minutes: 10
         run: |
