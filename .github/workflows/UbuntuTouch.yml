@@ -34,7 +34,13 @@ jobs:
       - name: Configure apt sources for cross packages
         run: |
           # archive.ubuntu.com serves only amd64/i386; ports.ubuntu.com serves arm64/armhf.
-          # Arch-restrict each so apt never 404s on cross-arch indexes.
+          # Disable every existing source (mirrorlist, azure, etc.) and write only
+          # the two arch-restricted sources we need so apt never 404s.
+          sudo mv /etc/apt/sources.list /etc/apt/sources.list.disabled 2>/dev/null || true
+          for f in /etc/apt/sources.list.d/*; do
+            [ -f "$f" ] || continue
+            sudo mv "$f" "$f.disabled" 2>/dev/null || true
+          done
           printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse\n' \
             | sudo tee /etc/apt/sources.list > /dev/null
           printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse\n' \
