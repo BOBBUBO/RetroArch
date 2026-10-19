@@ -1,9 +1,6 @@
 name: CI QNX input drivers (stand-in SDK)
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

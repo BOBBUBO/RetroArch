@@ -16,9 +16,6 @@ name: CI Linux pace shadow [debug harness]
 # one can.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

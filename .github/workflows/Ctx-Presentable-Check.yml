@@ -1,9 +1,6 @@
 name: CI Context presentable() contract
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

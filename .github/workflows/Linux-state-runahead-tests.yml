@@ -6,20 +6,6 @@ name: CI Linux state_manager + runahead tests
 # ASan and UBSan with halt_on_error.
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - state_manager.c
-      - state_manager.h
-      - runahead.c
-      - runahead.h
-      - runloop.h
-      - samples/state_rewind/**
-      - samples/runahead/**
-      - tasks/task_nbio_slice.c
-      - tasks/tasks_internal.h
-      - libretro-common/queues/task_queue.c
-      - .github/workflows/Linux-state-runahead-tests.yml
   pull_request:
     branches: [master]
     paths:

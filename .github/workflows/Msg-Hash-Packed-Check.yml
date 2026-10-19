@@ -30,9 +30,6 @@ name: CI msg_hash packed tables
 # writing, so this is the lane that catches a header edited by hand.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

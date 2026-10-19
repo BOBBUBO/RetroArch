@@ -1,9 +1,6 @@
 name: CI Sample object directories
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

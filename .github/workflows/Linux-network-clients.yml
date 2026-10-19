@@ -7,9 +7,6 @@ name: CI Linux network clients
 # short budget.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

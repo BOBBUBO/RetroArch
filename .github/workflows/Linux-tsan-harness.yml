@@ -15,9 +15,6 @@ name: CI Linux TSan [threaded-video harness]
 # halt_on_error itself, so any report fails the job.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

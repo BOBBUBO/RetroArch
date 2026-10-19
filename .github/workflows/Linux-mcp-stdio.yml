@@ -1,9 +1,6 @@
 name: CI Linux MCP over stdio
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

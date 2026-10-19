@@ -1,14 +1,6 @@
 name: CI builtin media player
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'cores/libretro-media/**'
-      - 'samples/cores/webm_player/**'
-      - 'libretro-common/formats/**'
-      - 'libretro-common/include/formats/**'
-      - '.github/workflows/Linux-webm-player.yml'
   pull_request:
     branches: [master]
     paths:

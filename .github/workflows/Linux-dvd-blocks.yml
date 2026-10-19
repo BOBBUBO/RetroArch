@@ -1,16 +1,6 @@
 name: CI optical DVD blocks
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'tasks/task_content_disc.c'
-      - 'libretro-common/cdrom/**'
-      - 'libretro-common/vfs/**'
-      - 'libretro-common/include/cdrom/**'
-      - 'libretro-common/include/vfs/**'
-      - 'libretro-common/samples/file/vfs_cdrom/**'
-      - '.github/workflows/Linux-dvd-blocks.yml'
   pull_request:
     branches: [master]
     paths:

@@ -24,9 +24,6 @@ name: CI Linux TSan [Threaded video]
 # and the baseline wants a few green runs before it gates.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

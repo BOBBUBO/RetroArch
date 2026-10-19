@@ -1,9 +1,6 @@
 name: CI Linux without pkg-config
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

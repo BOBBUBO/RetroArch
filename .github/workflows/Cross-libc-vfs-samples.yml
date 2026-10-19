@@ -26,19 +26,6 @@ name: CI cross-libc libretro-common/vfs samples
 # transparency case is the one that catches its absence.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'libretro-common/streams/file_stream.c'
-      - 'libretro-common/vfs/**'
-      - 'libretro-common/include/vfs/**'
-      - 'libretro-common/include/streams/file_stream.h'
-      - 'libretro-common/samples/file/vfs/**'
-      - 'libretro-common/fastjmp/**'
-      - 'libretro-common/include/fastjmp.h'
-      - 'libretro-common/samples/fastjmp/**'
-      - '.github/workflows/Cross-libc-vfs-samples.yml'
   pull_request:
     paths:
       - 'libretro-common/streams/file_stream.c'

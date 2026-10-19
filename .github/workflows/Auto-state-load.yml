@@ -1,13 +1,5 @@
 name: Deferred auto-state regression
 on:
-  push:
-    paths:
-      - 'runloop.c'
-      - 'runloop.h'
-      - 'runahead.c'
-      - 'command.c'
-      - 'samples/runloop/auto_state_load/**'
-      - '.github/workflows/Auto-state-load.yml'
   pull_request:
     paths:
       - 'runloop.c'
@@ -16,6 +8,7 @@ on:
       - 'command.c'
       - 'samples/runloop/auto_state_load/**'
       - '.github/workflows/Auto-state-load.yml'
+  workflow_dispatch:
 jobs:
   regression:
     runs-on: ubuntu-latest

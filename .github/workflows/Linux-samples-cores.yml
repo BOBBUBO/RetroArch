@@ -1,18 +1,6 @@
 name: CI Linux samples/cores
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'cores/libretro-ffmpeg/**'
-      - 'libretro-common/queues/**'
-      - 'libretro-common/include/retro_spsc.h'
-      - 'libretro-common/include/retro_atomic.h'
-      - 'camera/drivers/**'
-      - 'samples/camera/**'
-      - 'samples/cores/**'
-      - '.github/workflows/Linux-samples-cores.yml'
   pull_request:
     branches:
       - master

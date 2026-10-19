@@ -1,9 +1,6 @@
 name: CI Linux libretro-common samples
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

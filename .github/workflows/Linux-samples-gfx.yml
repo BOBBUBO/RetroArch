@@ -1,9 +1,6 @@
 name: CI Linux samples/gfx
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

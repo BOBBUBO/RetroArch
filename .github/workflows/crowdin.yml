@@ -3,12 +3,7 @@
 name: Crowdin Workflow
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'intl/*_us.h'
-      - 'intl/*_us.json'
+  workflow_dispatch:
 
 permissions:
   contents: read

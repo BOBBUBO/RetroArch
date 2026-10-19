@@ -30,31 +30,6 @@ name: CI Windows raw input under Wine
 # controller sends - was tried by hand when the path was made.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'input/input_driver.c'
-      - 'input/input_driver.h'
-      - 'input/input_driver_choice.c'
-      - 'input/drivers/winraw_input.c'
-      - 'input/drivers/winraw_mouse_pending.h'
-      - 'input/drivers/winraw_mouse_buttons.h'
-      - 'input/drivers_joypad/winraw_joypad.c'
-      - 'gfx/common/win32_common.c'
-      - 'gfx/common/win32_msg_route.h'
-      - 'gfx/common/win32_ime.h'
-      - 'samples/input/win32_ime/**'
-      - 'gfx/display_servers/dispserv_win32.c'
-      - 'gfx/drivers/gdi_gfx.c'
-      - 'gfx/drivers_context/wgl_ctx.c'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_wrapper.*'
-      - 'ui/drivers/ui_win32.c'
-      - 'retroarch.c'
-      - 'runloop.c'
-      - 'samples/input/windows_wine_smoke/**'
-      - '.github/workflows/Windows-wine-input.yml'
   pull_request:
     paths:
       - 'input/input_driver.c'

@@ -28,14 +28,6 @@ name: CI RGUI pixel format
 # gets checked the moment its row is added to rgui_pixel_format_map.
 
 on:
-  push:
-    paths:
-      - 'menu/drivers/rgui.c'
-      - 'tools/rgui_pixfmt_check.c'
-      - 'tools/rgui_pixfmt_harness.inc'
-      - 'tools/check_common.h'
-      - 'tools/check.sh'
-      - '.github/workflows/RGUI-Pixel-Format-Check.yml'
   pull_request:
     paths:
       - 'menu/drivers/rgui.c'

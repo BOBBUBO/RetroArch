@@ -1,9 +1,6 @@
 name: CI Visual C++ 6 project (stand-in compiler)
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

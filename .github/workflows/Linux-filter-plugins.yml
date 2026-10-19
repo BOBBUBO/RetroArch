@@ -12,15 +12,6 @@ name: CI Linux filter plugins
 # LeakSanitizer, and under ThreadSanitizer.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'gfx/video_filters/**'
-      - 'libretro-common/audio/dsp_filters/**'
-      - 'libretro-common/include/libretro_dspfilter.h'
-      - 'samples/gfx/filter_plugins/**'
-      - '.github/workflows/Linux-filter-plugins.yml'
   pull_request:
     paths:
       - 'gfx/video_filters/**'

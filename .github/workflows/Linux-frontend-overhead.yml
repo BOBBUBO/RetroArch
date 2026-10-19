@@ -16,9 +16,6 @@ name: CI Linux frontend overhead [frame-path harness]
 # excluded.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

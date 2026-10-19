@@ -9,9 +9,6 @@ name: CI Linux TSan [sample suites]
 # out and why.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

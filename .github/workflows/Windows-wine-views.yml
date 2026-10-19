@@ -11,25 +11,6 @@ name: CI Windows views under Wine
 # from its release, is put in as D3DCompiler_47.dll.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'gfx/common/d3d9_*'
-      - 'gfx/drivers/gdi_gfx.c'
-      - 'gfx/common/gdi_defines.h'
-      - 'gfx/drivers/d3d8.c'
-      - 'gfx/drivers/d3d9hlsl.c'
-      - 'gfx/drivers/d3d10.c'
-      - 'gfx/drivers/d3d11.c'
-      - 'gfx/drivers/d3d12.c'
-      - 'gfx/drivers/d3d_shaders/views_sm*.hlsl.h'
-      - 'gfx/video_views.*'
-      - 'gfx/video_views_draw.h'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_wrapper.*'
-      - 'samples/cores/video_views/**'
-      - '.github/workflows/Windows-wine-views.yml'
   pull_request:
     paths:
       - 'gfx/common/d3d9_*'

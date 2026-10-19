@@ -9,19 +9,6 @@ name: CI Linux EGL hardware core
 # parts of its EGL so the pbuffer paths run too.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'gfx/common/egl_common.c'
-      - 'gfx/common/egl_common.h'
-      - 'gfx/drivers_context/xegl_ctx.c'
-      - 'gfx/drivers/gl2.c'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_hw.c'
-      - 'gfx/video_thread_wrapper.c'
-      - 'samples/gfx/egl_hw_core/**'
-      - '.github/workflows/Linux-egl-hw-core.yml'
   pull_request:
     paths:
       - 'gfx/common/egl_common.c'

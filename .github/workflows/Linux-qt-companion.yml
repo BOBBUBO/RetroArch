@@ -1,12 +1,10 @@
 name: CI Linux Qt companion (persistence)
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
   contents: read

@@ -14,26 +14,6 @@ name: CI Windows menus under Wine
 # (samples/gfx/menu_wine/swfb.py).
 
 on:
-  push:
-    paths:
-      - 'gfx/drivers/d3d*.c'
-      - 'gfx/drivers/gl2.c'
-      - 'gfx/drivers/gl3.c'
-      - 'gfx/drivers/d3d_shaders/**'
-      - 'gfx/common/d3d*'
-      - 'gfx/common/gl*'
-      - 'gfx/gfx_display.*'
-      - 'gfx/font_driver.*'
-      - 'gfx/font_layout.h'
-      - 'gfx/drivers_font/**'
-      - 'gfx/drivers_font_renderer/**'
-      - 'menu/drivers/**'
-      - 'menu/menu_driver.*'
-      - 'samples/gfx/menu_wine/**'
-      - 'samples/gfx/d3d12_menu_mapping/**'
-      - 'samples/gfx/threaded_video/harness_core.c'
-      - 'samples/gfx/d3d9_ex/**'
-      - '.github/workflows/Windows-wine-menu.yml'
   pull_request:
     paths:
       - 'gfx/drivers/d3d*.c'

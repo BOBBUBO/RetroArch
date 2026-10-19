@@ -15,29 +15,6 @@ name: CI Linux overlay on screen
 # the pack by hand, can see that; this can.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'input/input_driver.c'
-      - 'input/input_overlay*'
-      - 'tasks/task_overlay.c'
-      - 'led/drivers/led_overlay.c'
-      - 'gfx/gfx_surface.*'
-      - 'gfx/gfx_surface_player.*'
-      - 'libretro-common/formats/video_player.c'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_wrapper.*'
-      - 'gfx/drivers/gl2.c'
-      - 'menu/menu_driver.c'
-      - 'input/drivers/x11_input.c'
-      - 'samples/input/overlay_on_screen/**'
-      - 'input/input_driver_choice.c'
-      - 'gfx/drivers_context/x_ctx.c'
-      - 'gfx/common/x11_common.c'
-      - 'samples/input/x11_smoke/**'
-      - 'samples/input/windows_wine_smoke/smoke_core.c'
-      - '.github/workflows/Linux-overlay-on-screen.yml'
   pull_request:
     paths:
       - 'input/input_driver.c'

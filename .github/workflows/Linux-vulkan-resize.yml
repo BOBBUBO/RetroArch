@@ -18,19 +18,6 @@ name: CI Linux Vulkan resize
 # rebuild draws. See samples/gfx/vulkan_resize/run.sh.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'gfx/drivers/vulkan.c'
-      - 'gfx/common/vulkan_common.*'
-      - 'gfx/drivers_context/x_vk_ctx.c'
-      - 'gfx/drivers_shader/shader_vulkan.*'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_wrapper.*'
-      - 'samples/gfx/vulkan_resize/**'
-      - 'samples/input/windows_wine_smoke/smoke_core.c'
-      - '.github/workflows/Linux-vulkan-resize.yml'
   pull_request:
     paths:
       - 'gfx/drivers/vulkan.c'

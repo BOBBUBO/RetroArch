@@ -10,9 +10,8 @@ name: CI Apple
 # rationale in a comment above it.
 
 on:
-  push:
-    branches: [master]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read

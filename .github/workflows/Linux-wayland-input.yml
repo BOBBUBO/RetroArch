@@ -17,22 +17,6 @@ name: CI Linux Wayland input
 # samples/input/wayland_smoke/run.sh.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'input/input_driver.c'
-      - 'input/input_driver.h'
-      - 'input/drivers/wayland_input.c'
-      - 'input/common/wayland_common.*'
-      - 'gfx/common/wayland_common.*'
-      - 'gfx/drivers_context/wayland_ctx.c'
-      - 'gfx/drivers_context/wayland_vk_ctx.c'
-      - 'gfx/video_driver.c'
-      - 'gfx/video_thread_wrapper.*'
-      - 'samples/input/wayland_smoke/**'
-      - 'samples/input/windows_wine_smoke/smoke_core.c'
-      - '.github/workflows/Linux-wayland-input.yml'
   pull_request:
     paths:
       - 'input/input_driver.c'

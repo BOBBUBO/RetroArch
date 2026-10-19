@@ -1,9 +1,6 @@
 name: CI OpenXR (stand-in runtime, desktop headset path)
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

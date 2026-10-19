@@ -1,12 +1,10 @@
 name: CI Linux Headless [No Menu] (i686)
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
+  workflow_dispatch:
 
 permissions:
   contents: read

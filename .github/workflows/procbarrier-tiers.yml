@@ -15,15 +15,6 @@ name: CI procbarrier tiers
 #   macOS x86_64     page-flip, signal
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'libretro-common/rthreads/**'
-      - 'libretro-common/include/rthreads/**'
-      - 'libretro-common/include/retro_atomic.h'
-      - 'libretro-common/samples/rthreads/retro_procbarrier_test/**'
-      - 'libretro-common/samples/rthreads/retro_asym_eventcount_test/**'
-      - '.github/workflows/procbarrier-tiers.yml'
   pull_request:
     paths:
       - 'libretro-common/rthreads/**'

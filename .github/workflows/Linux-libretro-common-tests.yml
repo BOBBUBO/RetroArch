@@ -7,9 +7,6 @@ name: CI Linux libretro-common tests
 # cannot be built reads exactly like a suite that passes.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

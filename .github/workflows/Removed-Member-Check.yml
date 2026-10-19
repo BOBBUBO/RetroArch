@@ -27,9 +27,6 @@ name: CI removed struct members
 # time.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

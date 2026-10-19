@@ -7,15 +7,6 @@ name: CI Linux gl1 upload
 # expansion, and texture storage respecified across frame size changes.
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'gfx/drivers/gl1.c'
-      - 'libretro-common/gfx/scaler/pixconv.c'
-      - 'libretro-common/include/gfx/scaler/pixconv.h'
-      - 'samples/gfx/gl1_upload/**'
-      - '.github/workflows/Linux-gl1-upload.yml'
   pull_request:
     paths:
       - 'gfx/drivers/gl1.c'

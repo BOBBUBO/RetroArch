@@ -16,11 +16,10 @@ name: CI macOS PowerPC (cross)
 # which is what makes the binary launch on Tiger.
 
 on:
-  push:
-    branches: [master]
   pull_request:
   repository_dispatch:
     types: [run_build]
+  workflow_dispatch:
 
 permissions:
   contents: read

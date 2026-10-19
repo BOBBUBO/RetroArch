@@ -37,9 +37,6 @@ name: CI Linux ASan + UBSan [No Menu]
 # be re-enabled once the baseline is green.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

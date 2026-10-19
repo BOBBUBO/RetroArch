@@ -15,13 +15,6 @@ name: CI Windows (memmap area)
 # wrong addresses.
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'libretro-common/memmap/**'
-      - 'libretro-common/include/memmap.h'
-      - 'libretro-common/samples/memmap/**'
-      - '.github/workflows/Windows-memmap-area.yml'
   pull_request:
     paths:
       - 'libretro-common/memmap/**'
@@ -30,6 +23,7 @@ on:
       - '.github/workflows/Windows-memmap-area.yml'
   repository_dispatch:
     types: [run_build]
+  workflow_dispatch:
 
 permissions:
   contents: read

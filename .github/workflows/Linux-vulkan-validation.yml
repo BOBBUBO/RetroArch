@@ -76,9 +76,6 @@ name: CI Vulkan/GL/D3D11 [idle waits + driver harness]
 #    with SDL3 in place of SDL2.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

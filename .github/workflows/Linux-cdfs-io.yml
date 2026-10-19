@@ -1,14 +1,6 @@
 name: CI CDFS sector I/O
 
 on:
-  push:
-    branches: [master]
-    paths:
-      - 'libretro-common/formats/cdfs/**'
-      - 'libretro-common/include/formats/cdfs.h'
-      - 'libretro-common/samples/formats/cdfs/**'
-      - 'cheevos/cheevos.c'
-      - '.github/workflows/Linux-cdfs-io.yml'
   pull_request:
     branches: [master]
     paths:

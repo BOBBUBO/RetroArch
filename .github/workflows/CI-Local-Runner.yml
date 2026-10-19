@@ -1,9 +1,6 @@
 name: CI local workflow runner
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

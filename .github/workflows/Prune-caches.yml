@@ -7,9 +7,6 @@ name: CI prune caches
 # newest entry for each job and branch.
 
 on:
-  push:
-    branches:
-      - master
   schedule:
     - cron: '23 * * * *'
   workflow_dispatch:

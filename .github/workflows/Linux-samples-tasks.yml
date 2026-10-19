@@ -1,9 +1,6 @@
 name: CI Linux samples/tasks
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

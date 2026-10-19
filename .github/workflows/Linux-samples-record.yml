@@ -1,16 +1,6 @@
 name: CI Linux samples/record
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - 'record/**'
-      - 'libretro-common/queues/**'
-      - 'libretro-common/include/retro_spsc.h'
-      - 'libretro-common/include/retro_atomic.h'
-      - 'samples/record/**'
-      - '.github/workflows/Linux-samples-record.yml'
   pull_request:
     branches:
       - master

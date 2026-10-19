@@ -10,9 +10,6 @@ name: CI Linux library network backends
 # server, the libsmb2 lane runs the SMB VFS tests against a local smbd.
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

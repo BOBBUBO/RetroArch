@@ -15,31 +15,6 @@ name: CI Linux menu harness
 # ui_qt.o and drags the entire Qt UI in with it.
 
 on:
-  push:
-    paths:
-      - 'menu/**'
-      - 'playlist.c'
-      - 'playlist.h'
-      - 'tasks/task_content*'
-      - 'samples/menu/playlist_nav/**'
-      - 'samples/network/command_frames/**'
-      - 'samples/menu/nav_repeat_stall/**'
-      - 'samples/menu/mouse_click/**'
-      - 'samples/menu/menu_icon_ownership/**'
-      - 'samples/menu/ozone_sublabel_scroll/**'
-      - 'gfx/gfx_display.c'
-      - 'runloop.c'
-      - 'samples/menu/network_settings/**'
-      - 'intl/msg_hash_lbl.h'
-      - 'msg_hash_lbl_str.h'
-      - 'samples/menu/resolution_reset/**'
-      - 'samples/menu/setting_command/**'
-      - 'samples/menu/core_info_page/**'
-      - 'samples/menu/load_content_filter/**'
-      - 'samples/settings/packed_rows/**'
-      - 'setting_list.h'
-      - 'gfx/video_defines.h'
-      - '.github/workflows/Linux-menu-harness.yml'
   pull_request:
     paths:
       - 'menu/**'

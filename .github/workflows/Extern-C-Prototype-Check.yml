@@ -1,9 +1,6 @@
 name: CI extern "C" prototype parity
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master

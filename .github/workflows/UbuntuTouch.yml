@@ -11,6 +11,7 @@ on:
     types: [ published ]
   repository_dispatch:
     types: [ run_build ]
+  workflow_dispatch:
 
 env:
   PACKAGE_NAME: com.libretro.retroarch

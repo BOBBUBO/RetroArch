@@ -1,16 +1,12 @@
 name: CI webOS
 
 on:
-  push:
-    tags-ignore:
-      - '*'
-    branches:
-      - '*'
   pull_request:
   release:
     types: [ published ]
   repository_dispatch:
     types: [ run_build ]
+  workflow_dispatch:
 
 env:
   PACKAGE_NAME: com.retroarch.webos

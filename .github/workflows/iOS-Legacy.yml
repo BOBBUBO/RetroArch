@@ -14,11 +14,10 @@ name: CI iOS 6 (armv7)
 # SDK: theos/sdks, pinned to a commit; only the headers are checked out.
 
 on:
-  push:
-    branches: [master]
   pull_request:
   repository_dispatch:
     types: [run_build]
+  workflow_dispatch:
 
 permissions:
   contents: read
