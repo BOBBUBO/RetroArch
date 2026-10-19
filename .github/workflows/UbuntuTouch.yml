@@ -93,8 +93,10 @@ jobs:
 
       - name: Check SDL2 headers
         run: |
-          find /usr/aarch64-linux-gnu/include -name "SDL.h" 2>/dev/null || echo "SDL.h not found"
-          find /usr/aarch64-linux-gnu -path "*SDL2*" -name "*.h" 2>/dev/null | head -5 || echo "No SDL2 headers found"
+          echo "=== SDL2 header search ==="
+          ls -la /usr/aarch64-linux-gnu/include/SDL2/ 2>&1 || echo "SDL2 dir not found"
+          ls -la /usr/aarch64-linux-gnu/include/SDL.h 2>&1 || echo "SDL.h not found in include root"
+          dpkg -L libsdl2-dev:arm64 2>/dev/null | grep "\.h$" | head -10 || echo "dpkg -L failed"
 
       - name: Restore ccache
         uses: actions/cache/restore@v4
@@ -135,7 +137,7 @@ jobs:
         run: |
           make -f Makefile.ut clean CROSS_COMPILE=aarch64-linux-gnu-
           make -f Makefile.ut click CROSS_COMPILE=aarch64-linux-gnu- CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ \
-            -j"$(getconf _NPROCESSORS_ONLN)"
+            V=1 -j"$(getconf _NPROCESSORS_ONLN)"
         env:
           DEBUG: ${{ github.event_name == 'release' && '0' || '1' }}
 
@@ -144,7 +146,7 @@ jobs:
         run: |
           make -f Makefile.ut clean CROSS_COMPILE=arm-linux-gnueabihf-
           make -f Makefile.ut click CROSS_COMPILE=arm-linux-gnueabihf- CC=arm-linux-gnueabihf-gcc CXX=arm-linux-gnueabihf-g++ \
-            -j"$(getconf _NPROCESSORS_ONLN)"
+            V=1 -j"$(getconf _NPROCESSORS_ONLN)"
         env:
           DEBUG: ${{ github.event_name == 'release' && '0' || '1' }}
 
