@@ -21,6 +21,9 @@ endif
 
 STAGING_DIR ?= /usr/$(TRIPLET)
 
+CC := $(CROSS_COMPILE)gcc
+CXX := $(CROSS_COMPILE)g++
+
 UTOUCH = 1
 DEBUG ?= 0
 
