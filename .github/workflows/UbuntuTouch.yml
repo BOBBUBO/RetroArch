@@ -33,12 +33,16 @@ jobs:
 
       - name: Configure apt sources for cross packages
         run: |
-          # archive.ubuntu.com only serves amd64/i386; arm64/armhf indexes live on ports.ubuntu.com
-          for f in /etc/apt/sources.list /etc/apt/sources.list.d/*; do
-            [ -f "$f" ] || continue
-            sudo sed -i -e 's#mirror+file:/etc/apt/apt-mirrors.txt#http://archive.ubuntu.com/ubuntu/#g' \
-              -e 's#http://azure\.archive\.ubuntu\.com/ubuntu#http://archive.ubuntu.com/ubuntu#g' "$f"
-          done
+          # archive.ubuntu.com serves only amd64/i386; ports.ubuntu.com serves arm64/armhf.
+          # Arch-restrict each so apt never 404s on cross-arch indexes.
+          printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble main restricted universe multiverse\n' \
+            | sudo tee /etc/apt/sources.list > /dev/null
+          printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-updates main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list > /dev/null
+          printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-backports main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list > /dev/null
+          printf 'deb [arch=amd64] http://archive.ubuntu.com/ubuntu/ noble-security main restricted universe multiverse\n' \
+            | sudo tee -a /etc/apt/sources.list > /dev/null
           printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble main restricted universe multiverse\n' \
             | sudo tee /etc/apt/sources.list.d/ubuntu-ports.list > /dev/null
           printf 'deb [arch=arm64,armhf] http://ports.ubuntu.com/ubuntu-ports noble-updates main restricted universe multiverse\n' \
