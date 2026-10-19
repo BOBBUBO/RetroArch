@@ -1,0 +1,8 @@
+title: RetroArch
+author: RetroArch Team
+description: RetroArch - Libretro frontend
+name: com.libretro.retroarch
+framework: ubuntu-sdk-24.04
+architecture: [arm64, armhf]
+template: cmake
+target: ubuntu-touch

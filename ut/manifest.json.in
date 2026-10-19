@@ -1,7 +1,7 @@
 {
   "name": "com.libretro.retroarch",
   "title": "RetroArch",
-  "maintainer": "RetroArch",
+  "maintainer": "RetroArch Team",
   "description": "RetroArch - Libretro frontend",
   "version": "@PACKAGE_VERSION@",
   "framework": "ubuntu-sdk-24.04",
