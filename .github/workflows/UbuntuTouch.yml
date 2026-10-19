@@ -91,6 +91,11 @@ jobs:
           sudo ln -sf arm-linux-gnueabihf-gcc-13 /usr/bin/arm-linux-gnueabihf-gcc
           sudo ln -sf arm-linux-gnueabihf-g++-13 /usr/bin/arm-linux-gnueabihf-g++
 
+      - name: Check SDL2 headers
+        run: |
+          find /usr/aarch64-linux-gnu/include -name "SDL.h" 2>/dev/null || echo "SDL.h not found"
+          find /usr/aarch64-linux-gnu -path "*SDL2*" -name "*.h" 2>/dev/null | head -5 || echo "No SDL2 headers found"
+
       - name: Restore ccache
         uses: actions/cache/restore@v4
         with:
@@ -130,7 +135,7 @@ jobs:
         run: |
           make -f Makefile.ut clean CROSS_COMPILE=aarch64-linux-gnu-
           bash .github/workflows/scripts/ccache-make.sh -f Makefile.ut click CROSS_COMPILE=aarch64-linux-gnu- \
-            -j"$(getconf _NPROCESSORS_ONLN)"
+            V=1 -j"$(getconf _NPROCESSORS_ONLN)"
         env:
           DEBUG: ${{ github.event_name == 'release' && '0' || '1' }}
 
