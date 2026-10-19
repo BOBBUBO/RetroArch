@@ -308,8 +308,9 @@ click: $(TARGET)
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \
 	    -e "s/@CLICK_ARCH@/$(CLICK_ARCH)/" \
 	    ut/manifest.json.in > ut/dist/manifest.json
-	click-build ut/dist
-	mv $(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click ut/
+	cd ut/dist && tar -cf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
+	    manifest.json retroarch com.libretro.retroarch.desktop \
+	    com.libretro.retroarch.apparmor com.libretro.retroarch.png
 	@echo "Click package: ut/$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click"
 
 .PHONY: all clean click info
