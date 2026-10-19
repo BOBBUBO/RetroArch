@@ -214,10 +214,12 @@ ifneq ($(GIT_VERSION),)
 endif
 
 DEF_FLAGS += $(INCLUDE_DIRS)
-# On Ubuntu 24.04, libsdl2-dev:arm64/armhf installs headers to /usr/include/SDL2
-# instead of the multiarch dir. Add both paths to be safe.
-CPPFLAGS += -I/usr/include/SDL2 -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
-DEF_FLAGS += -I/usr/include/SDL2 -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
+# On Ubuntu 24.04, cross -dev packages (arm64/armhf) install headers to
+# /usr/include/ instead of the multiarch dir. Add the needed subdirs.
+CPPFLAGS += -I/usr/include/SDL2 -I/usr/include/freetype2 -I/usr/include/fontconfig \
+            -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
+DEF_FLAGS += -I/usr/include/SDL2 -I/usr/include/freetype2 -I/usr/include/fontconfig \
+             -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
 LDFLAGS += $(CFLAGS) $(CXXFLAGS) $(DEF_FLAGS)
 CFLAGS += $(DEF_FLAGS)
 CXXFLAGS += $(DEF_FLAGS)
