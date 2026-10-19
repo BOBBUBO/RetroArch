@@ -187,8 +187,8 @@ endif
 ifeq ($(HAVE_SDL2),1)
   DEFINES += -DHAVE_SDL2
 endif
+SDL2_CFLAGS := -I$(STAGING_DIR)/usr/include/SDL2
 SDL2_LIBS ?= -lSDL2
-SDL2_CFLAGS ?=
 FREETYPE_LIBS ?= -lfreetype
 FREETYPE_CFLAGS ?=
 FONTCONFIG_LIBS ?= -lfontconfig
