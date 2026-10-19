@@ -82,7 +82,8 @@ jobs:
             libegl1-mesa-dev:armhf libgles2:armhf \
             libsdl2-dev:armhf libfreetype-dev:armhf libfontconfig1-dev:armhf \
             libudev-dev:armhf libxkbcommon-dev:armhf libpulse-dev:armhf \
-            libpng-dev:armhf libjpeg-turbo8-dev:armhf zlib1g-dev:armhf
+            libpng-dev:armhf libjpeg-turbo8-dev:armhf zlib1g-dev:armhf \
+            click-build
 
       - name: Create cross compiler symlinks for ccache
         run: |
