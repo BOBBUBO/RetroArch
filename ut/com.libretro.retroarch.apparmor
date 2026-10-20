@@ -7,9 +7,9 @@
     "keep-display-on"
   ],
   "read_path": [
-    "/home/phablet/**",
-    "/media/**",
-    "/run/media/**"
+    "/home/phablet/",
+    "/media/",
+    "/run/media/"
   ],
   "policy_version": 2404.1
 }
