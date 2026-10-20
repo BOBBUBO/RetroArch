@@ -172,6 +172,7 @@ HAVE_64TO32BIT_BRIDGE = 0
 
 OS = Linux
 TARGET = retroarch
+LAUNCHER = retroarch-launcher-$(CLICK_ARCH)
 
 OBJ :=
 LINK := $(CC)
@@ -292,6 +293,10 @@ $(TARGET): $(RARCH_OBJ)
 	@$(if $(Q), $(shell echo echo LD $@),)
 	$(Q)$(LINK) -o $@ $(RARCH_OBJ) $(LIBS) $(LDFLAGS) $(LIBRARY_DIRS)
 
+$(LAUNCHER): ut/launcher.c
+	@$(if $(Q), $(shell echo echo CC $<),)
+	$(Q)$(CC) $(ARCHFLAGS) -O2 -o $@ $<
+
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(if $(Q), $(shell echo echo CC $<),)
@@ -317,21 +322,23 @@ STRIP ?= $(CROSS_COMPILE)strip
 clean:
 	@$(if $(Q), echo $@,)
 	$(Q)rm -rf $(OBJDIR_BASE)
-	$(Q)rm -f $(TARGET)
+	$(Q)rm -f $(TARGET) retroarch-launcher-*
 	$(Q)rm -f *.d
 	$(Q)rm -rf ut/dist
 	$(Q)rm -f ut/*.click
 
 INSTALL_DIR ?= ut/dist
 
-click: $(TARGET)
+click: $(TARGET) $(LAUNCHER)
 	rm -rf $(INSTALL_DIR)
 	mkdir -p $(INSTALL_DIR)
 	if [ "$(DEBUG)" = "1" ]; then :; else \
 	  $(STRIP) $(TARGET); \
+	  $(STRIP) $(LAUNCHER); \
 	fi
 	cp $(TARGET) $(INSTALL_DIR)/retroarch
-	chmod +x $(INSTALL_DIR)/retroarch
+	cp $(LAUNCHER) $(INSTALL_DIR)/retroarch-launcher
+	chmod +x $(INSTALL_DIR)/retroarch $(INSTALL_DIR)/retroarch-launcher
 	cp ut/icon.png $(INSTALL_DIR)/com.libretro.retroarch.png
 	cp ut/com.libretro.retroarch.desktop $(INSTALL_DIR)/
 	cp ut/com.libretro.retroarch.apparmor $(INSTALL_DIR)/
