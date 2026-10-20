@@ -7,4 +7,33 @@ framework: ubuntu-sdk-24.04
 builder: custom
 build_dir: ${ROOT}/build/${ARCH_TRIPLET}/app
 install_dir: ${BUILD_DIR}/install
-build: cd ${ROOT} && make -f Makefile.ut click CROSS_COMPILE=${ARCH_TRIPLET}- INSTALL_DIR=${BUILD_DIR}/install
+build: cd ${ROOT} && make -f Makefile.ut click INSTALL_DIR=${BUILD_DIR}/install
+dependencies_target:
+- libegl1-mesa-dev
+- libgles2
+- libsdl2-dev
+- libfreetype-dev
+- libfontconfig1-dev
+- libudev-dev
+- libxkbcommon-dev
+- libpulse-dev
+- libpng-dev
+- libjpeg-turbo8-dev
+- zlib1g-dev
+- libasound2-dev
+- libatomic1
+install_lib:
+- libEGL.so.1
+- libGLESv2.so.2
+- libSDL2-2.0.so.0
+- libfreetype.so.6
+- libfontconfig.so.1
+- libudev.so.1
+- libxkbcommon.so.0
+- libpulse.so.0
+- libpulse-simple.so.0
+- libpng16.so.16
+- libjpeg.so.8
+- libz.so.1
+- libasound.so.2
+- libatomic.so.1
