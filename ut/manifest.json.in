@@ -1,11 +1,12 @@
 {
   "name": "com.libretro.retroarch",
   "title": "RetroArch",
-  "maintainer": "RetroArch Team",
+  "maintainer": "RetroArch Team <hunter_kaller@yahoo.com>",
   "description": "RetroArch - Libretro frontend",
   "version": "@PACKAGE_VERSION@",
-  "framework": "ubuntu-sdk-24.04",
-  "architecture": ["@CLICK_ARCH@"],
+  "framework": "ubuntu-touch-24.04-1.x",
+  "architecture": "@CLICK_ARCH@",
+  "icon": "com.libretro.retroarch.png",
   "hooks": {
     "com.libretro.retroarch": {
       "apparmor": "com.libretro.retroarch.apparmor",

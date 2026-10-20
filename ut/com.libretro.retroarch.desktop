@@ -2,7 +2,7 @@
 Name=RetroArch
 GenericName=Emulator
 Comment=RetroArch - Libretro frontend
-Exec=retroarch
+Exec=env XDG_CONFIG_HOME=/home/phablet/.config/com.libretro.retroarch retroarch
 Icon=com.libretro.retroarch
 Terminal=false
 Type=Application

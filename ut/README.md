@@ -7,28 +7,43 @@ Touch click packages. It builds inside Docker with the proper UT SDK and
 bundles all required libraries so the package installs on any UT device:
 
 ```sh
-pipx install clickable
+pipx install clickable-ut
 
 # Build for Redmi 9 lancelot (ARM64)
-clickable --target arm64
+clickable build --arch arm64
 
 # Build for ARM32 devices
-clickable --target armhf
+clickable build --arch armhf
 
 # Install on connected UT device
-clickable install
+clickable install --arch arm64
 ```
 
-Project config is in `clickables.yml` at the repo root. It uses `builder: custom`
+Project config is in `clickable.json` at the repo root. It uses `builder: custom`
 and builds via `Makefile.ut`, installing files into clickable's install directory
 so clickable can package them into a `.click`. Runtime libraries are declared
 in `dependencies_target` (build time) and `install_lib` (bundled into the click).
 
 ### Manual cross build (CI only)
 
-Without clickable, cross build on Ubuntu for CI:
+Without clickable, cross build on Ubuntu 24.04 for CI. Install the target
+development packages and the `click` packaging tool first:
 
 ```sh
+sudo apt install click \
+  gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
+  gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+  libsdl2-dev:arm64 libfreetype-dev:arm64 libfontconfig1-dev:arm64 \
+  libudev-dev:arm64 libxkbcommon-dev:arm64 libpulse-dev:arm64 \
+  libasound2-dev:arm64 libatomic1:arm64 libpng-dev:arm64 \
+  libjpeg-turbo8-dev:arm64 zlib1g-dev:arm64 \
+  libegl1-mesa-dev:arm64 libgles2:arm64 \
+  libsdl2-dev:armhf libfreetype-dev:armhf libfontconfig1-dev:armhf \
+  libudev-dev:armhf libxkbcommon-dev:armhf libpulse-dev:armhf \
+  libasound2-dev:armhf libatomic1:armhf libpng-dev:armhf \
+  libjpeg-turbo8-dev:armhf zlib1g-dev:armhf \
+  libegl1-mesa-dev:armhf libgles2:armhf
+
 make -f Makefile.ut clean CROSS_COMPILE=aarch64-linux-gnu-
 make -f Makefile.ut click CROSS_COMPILE=aarch64-linux-gnu- \
   -j$(getconf _NPROCESSORS_ONLN)
@@ -40,11 +55,12 @@ make -f Makefile.ut click CROSS_COMPILE=arm-linux-gnueabihf- \
 
 Packages are written to
 `ut/com.libretro.retroarch_<version>_arm64.click` and
-`ut/com.libretro.retroarch_<version>_armhf.click`.
+`ut/com.libretro.retroarch_<version>_armhf.click`. The cross build bundles the
+same runtime libraries as clickable and uses `click build`, so the result is a
+valid Click 0.4 package.
 
 CI builds both arches on every push to master via
 `.github/workflows/UbuntuTouch.yml`; artifacts are attached to the run.
 
-Note: manually built packages link against Ubuntu 24.04 system libraries and
-may be rejected by openstore on UT 24.04 devices due to library mismatch. Use
-clickable for packages that install reliably.
+For local use, prefer clickable: it uses the Ubuntu Touch 24.04 framework and
+its Docker image already provides the matching toolchain and libraries.

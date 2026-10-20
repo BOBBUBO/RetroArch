@@ -47,8 +47,16 @@ endif
 UTOUCH = 1
 DEBUG ?= 0
 
-CLICK_VERSION := $(shell grep '\#define PACKAGE_VERSION' version.all | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+CLICK_VERSION := $(shell grep '[#]define PACKAGE_VERSION' version.all | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
 APP_PACKAGE_NAME ?= com.libretro.retroarch
+CLICK ?= click
+CLICK_LIB_DIR ?= /usr/lib/$(TRIPLET)
+
+# Runtime libraries bundled into the click; same set as clickable.json.
+CLICK_LIBS = libSDL2-2.0.so* libfreetype.so.6* libfontconfig.so.1* \
+             libudev.so.1* libxkbcommon.so.0* libpulse.so.0* \
+             libpulse-simple.so.0* libpng16.so.16* libjpeg.so.8* \
+             libz.so.1* libasound.so.2* libatomic.so.1*
 
 HAVE_CLOUDSYNC = 1
 HAVE_SCREENSHOTS = 1
@@ -327,21 +335,19 @@ click: $(TARGET)
 	cp ut/icon.png $(INSTALL_DIR)/com.libretro.retroarch.png
 	cp ut/com.libretro.retroarch.desktop $(INSTALL_DIR)/
 	cp ut/com.libretro.retroarch.apparmor $(INSTALL_DIR)/
-ifeq ($(CLICKABLE),1)
-	# Clickable mode: use static manifest.json (clickable handles versioning)
-	cp ut/manifest.json $(INSTALL_DIR)/manifest.json
-else
-	# CI mode: sed substitute manifest.json.in
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \
 	    -e "s/@CLICK_ARCH@/$(CLICK_ARCH)/" \
 	    ut/manifest.json.in > $(INSTALL_DIR)/manifest.json
-endif
 ifneq ($(INSTALL_DIR),ut/dist)
 	@echo "Click files installed in $(INSTALL_DIR)"
 else
-	cd $(INSTALL_DIR) && tar -cf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
-	    manifest.json retroarch com.libretro.retroarch.desktop \
-	    com.libretro.retroarch.apparmor com.libretro.retroarch.png
+ifneq ($(TRIPLET),)
+	mkdir -p $(INSTALL_DIR)/lib/$(TRIPLET)
+	for lib in $(CLICK_LIBS); do cp -a $(CLICK_LIB_DIR)/$$lib $(INSTALL_DIR)/lib/$(TRIPLET)/; done
+endif
+	@command -v $(CLICK) >/dev/null 2>&1 || { echo "error: $(CLICK) not found (install the click package)" >&2; exit 1; }
+	cd $(INSTALL_DIR) && $(CLICK) build . --no-validate
+	mv $(INSTALL_DIR)/$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click ut/
 	@echo "Click package: ut/$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click"
 endif
 

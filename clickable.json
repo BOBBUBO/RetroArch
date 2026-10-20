@@ -1,0 +1,36 @@
+{
+  "clickable_minimum_required": "6",
+  "framework": "ubuntu-touch-24.04-1.x",
+  "builder": "custom",
+  "build": "${ROOT}/ut/build-clickable.sh",
+  "kill": "retroarch",
+  "dependencies_target": [
+    "libegl1-mesa-dev",
+    "libgles2",
+    "libsdl2-dev",
+    "libfreetype-dev",
+    "libfontconfig1-dev",
+    "libudev-dev",
+    "libxkbcommon-dev",
+    "libpulse-dev",
+    "libpng-dev",
+    "libjpeg-turbo8-dev",
+    "zlib1g-dev",
+    "libasound2-dev",
+    "libatomic1"
+  ],
+  "install_lib": [
+    "libSDL2-2.0.so*",
+    "libfreetype.so.6*",
+    "libfontconfig.so.1*",
+    "libudev.so.1*",
+    "libxkbcommon.so.0*",
+    "libpulse.so.0*",
+    "libpulse-simple.so.0*",
+    "libpng16.so.16*",
+    "libjpeg.so.8*",
+    "libz.so.1*",
+    "libasound.so.2*",
+    "libatomic.so.1*"
+  ]
+}
