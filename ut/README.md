@@ -81,3 +81,7 @@ none. The click package reads the user's own directories (`Documents`,
 `Downloads`, `Music`, `Pictures`, `Videos` and the SD card under `/media`) so
 the file browser can see game files; everything the app writes stays in its
 own configuration directory.
+
+The launcher moves `XDG_CONFIG_HOME` into the package's own directory, which
+also moves PulseAudio's client cookie out of the way, so it points
+`PULSE_COOKIE` at the cookie where it really is.

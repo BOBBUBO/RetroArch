@@ -9,7 +9,8 @@
   "read_path": [
     "/home/phablet/",
     "/media/",
-    "/run/media/"
+    "/run/media/",
+    "/etc/pulse/"
   ],
   "policy_version": 2404.1
 }

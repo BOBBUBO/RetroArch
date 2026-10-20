@@ -126,6 +126,8 @@ int main(int argc, char **argv)
    if (home && *home)
    {
       static const char suffix[] = "/.config/com.libretro.retroarch";
+      static const char cookie[] = "/.config/pulse/cookie";
+      char pulse[MAX_PATH_LEN];
       size_t len = strlen(home);
 
       if (len + sizeof(suffix) <= sizeof(config))
@@ -134,6 +136,16 @@ int main(int argc, char **argv)
          memcpy(config + len, suffix, sizeof(suffix));
          setenv("XDG_CONFIG_HOME", config, 1);
          fix_config(config);
+      }
+
+      /* PulseAudio keeps the client cookie in the user's own
+       * configuration directory, which the directory above moves out of
+       * the way: point the client at it where it really is. */
+      if (len + sizeof(cookie) <= sizeof(pulse))
+      {
+         memcpy(pulse, home, len);
+         memcpy(pulse + len, cookie, sizeof(cookie));
+         setenv("PULSE_COOKIE", pulse, 0);
       }
    }
 
