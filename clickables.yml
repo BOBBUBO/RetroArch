@@ -5,9 +5,9 @@ author: RetroArch Team
 description: RetroArch - Libretro frontend
 framework: ubuntu-sdk-24.04
 builder: custom
-build_dir: ${ROOT}/build/${ARCH_TRIPLET}/app
+build_dir: ${ROOT}
+build: make -f Makefile.ut click INSTALL_DIR=clickable-install
 install_dir: ${ROOT}/clickable-install
-build: cd ${ROOT} && make -f Makefile.ut click INSTALL_DIR=${ROOT}/clickable-install
 dependencies_target:
 - libegl1-mesa-dev
 - libgles2
