@@ -201,6 +201,7 @@ bool android_get_vfs_authorized_locations(
 #include "cores/internal_cores.h"
 #include "content.h"
 #include "core_info.h"
+#include "core_hw_render.h"
 #include "dynamic.h"
 #include "defaults.h"
 #include "msg_hash.h"
@@ -3034,6 +3035,7 @@ bool runloop_environment_cb(unsigned cmd, void *data)
                   cb->context_type, cb->version_minor, cb->version_major))
          {
             RARCH_ERR("[Environ] SET_HW_RENDER: Dynamic request HW context failed.\n");
+            core_hw_render_set_refused(true);
             return false;
          }
 
@@ -3043,6 +3045,7 @@ bool runloop_environment_cb(unsigned cmd, void *data)
                   cb->context_type, cb->version_minor, cb->version_major))
          {
             RARCH_ERR("[Environ] SET_HW_RENDER: Dynamic verify HW context failed.\n");
+            core_hw_render_set_refused(true);
             return false;
          }
 
@@ -10598,6 +10601,25 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
    bool             game_loaded   = false;
    runloop_state_t *runloop_st    = &runloop_state;
 
+   /* A core that needs a hardware rendering context cannot run where
+    * there is none to give it, and one that asked for a context and
+    * was refused one is in the same state: it was written to have the
+    * context and will not run without it. Either way the content is
+    * not loaded, rather than left to the core to fail on its own. */
+   if (!core_hw_render_available())
+   {
+      const char *core_path = path_get(RARCH_PATH_CORE);
+
+      if (core_hw_render_required(core_path))
+      {
+         RARCH_ERR("[Core] \"%s\" needs a hardware rendering context, which this platform does not provide.\n",
+               core_path);
+         return false;
+      }
+   }
+
+   core_hw_render_set_refused(false);
+
    video_driver_cached_frame_invalidate();
 #ifdef HAVE_WEBMPLAYER
    if (runloop_st->current_core_type == CORE_TYPE_WEBM)
@@ -10628,18 +10650,29 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
 
    if (game_loaded)
    {
-      /* If 'game_loaded' is true at this point, then
-       * core is actually running; register that any
-       * changes to global remap-related parameters
-       * should be reset once core is deinitialised */
-      input_state_get_ptr()->flags   |=  INP_FLAG_REMAPPING_CACHE_ACTIVE;
-      runloop_st->current_core.flags |=  RETRO_CORE_FLAG_GAME_LOADED;
+      /* The core asked for a hardware rendering context and was refused
+       * one: it was written to have the context, and running it anyway
+       * takes the core down. Refuse the content here instead. */
+      if (core_hw_render_get_refused() && !core_hw_render_available())
+      {
+         RARCH_ERR("[Core] This core needs a hardware rendering context, which this platform does not provide.\n");
+         game_loaded = false;
+      }
+      else
+      {
+         /* If 'game_loaded' is true at this point, then
+          * core is actually running; register that any
+          * changes to global remap-related parameters
+          * should be reset once core is deinitialised */
+         input_state_get_ptr()->flags   |=  INP_FLAG_REMAPPING_CACHE_ACTIVE;
+         runloop_st->current_core.flags |=  RETRO_CORE_FLAG_GAME_LOADED;
 
 #ifdef HAVE_GAME_AI
-      /* load models */
-      game_ai_load(load_info->info->path, runloop_st->current_core.retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM), runloop_st->current_core.retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM), libretro_log_cb);
+         /* load models */
+         game_ai_load(load_info->info->path, runloop_st->current_core.retro_get_memory_data(RETRO_MEMORY_SYSTEM_RAM), runloop_st->current_core.retro_get_memory_size(RETRO_MEMORY_SYSTEM_RAM), libretro_log_cb);
 #endif
-      return true;
+         return true;
+      }
    }
 
    runloop_st->current_core.flags &= ~RETRO_CORE_FLAG_GAME_LOADED;

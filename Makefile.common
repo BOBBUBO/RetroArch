@@ -376,6 +376,7 @@ endif
 
 OBJ += \
        core_info.o \
+       core_hw_render.o \
        core_backup.o \
        core_option_manager.o \
        $(LIBRETRO_COMM_DIR)/file/config_file.o \

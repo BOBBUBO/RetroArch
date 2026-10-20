@@ -85,3 +85,8 @@ own configuration directory.
 The launcher moves `XDG_CONFIG_HOME` into the package's own directory, which
 also moves PulseAudio's client cookie out of the way, so it points
 `PULSE_COOKIE` at the cookie where it really is.
+
+Cores that need a hardware rendering context cannot run here at all, so the
+launcher names them (in `RETROARCH_NO_HW_CORES`): the core downloader leaves
+them out of its list, and a content that names one is refused with a message
+instead of taking the app down with it.

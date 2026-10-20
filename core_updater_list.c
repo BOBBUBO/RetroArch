@@ -32,6 +32,7 @@
 
 #include "file_path_special.h"
 #include "core_info.h"
+#include "core_hw_render.h"
 
 #include "core_updater_list.h"
 
@@ -870,6 +871,12 @@ static bool core_updater_list_add_entry(
    const core_updater_list_entry_t *search_entry = NULL;
    core_updater_list_entry_t entry               = {0};
    bool well_formed                              = false;
+
+   /* A core that needs a hardware rendering context cannot run where
+    * the platform cannot give one, so it is not offered at all. */
+   if (!core_hw_render_available()
+         && core_hw_render_required(filename_str))
+      return true;
 
    /* Check whether core file is already included
     * in the list (this is *not* an error condition,

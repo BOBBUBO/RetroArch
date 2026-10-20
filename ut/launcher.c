@@ -6,6 +6,29 @@
 
 #define MAX_PATH_LEN 4096
 
+/* The cores that cannot run without a hardware rendering context, and
+ * so cannot run here at all: the compositor hands no EGL to Wayland
+ * clients, so there is no context to give them. The core downloader
+ * leaves them out, and a content that names one is refused. */
+#define NO_HW_RENDER_CORES \
+   "parallel_n64_libretro.so," \
+   "snes9x_libretro.so," \
+   "snes9x2010_libretro.so," \
+   "mgba_libretro.so," \
+   "mednafen_psx_hw_libretro.so," \
+   "swanstation_libretro.so," \
+   "ppsspp_libretro.so," \
+   "dolphin_libretro.so," \
+   "flycast_libretro.so," \
+   "citra_libretro.so," \
+   "citra2018_libretro.so," \
+   "cemu_libretro.so," \
+   "dosbox_pure_libretro.so," \
+   "melonds_libretro.so," \
+   "rpcs3_libretro.so," \
+   "pcsx2_libretro.so," \
+   "kronos_libretro.so"
+
 struct setting_fix
 {
    const char *key;
@@ -151,6 +174,9 @@ int main(int argc, char **argv)
 
    /* No EGL on Ubuntu Touch, so SDL2 has to render in software. */
    setenv("SDL_RENDER_DRIVER", "software", 0);
+
+   /* The cores that need a hardware rendering context cannot run here. */
+   setenv("RETROARCH_NO_HW_CORES", NO_HW_RENDER_CORES, 0);
 
    argv[0] = "retroarch";
    execvp("retroarch", argv);
