@@ -10601,23 +10601,10 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
    bool             game_loaded   = false;
    runloop_state_t *runloop_st    = &runloop_state;
 
-   /* A core that needs a hardware rendering context cannot run where
-    * there is none to give it, and one that asked for a context and
-    * was refused one is in the same state: it was written to have the
-    * context and will not run without it. Either way the content is
-    * not loaded, rather than left to the core to fail on its own. */
-   if (!core_hw_render_available())
-   {
-      const char *core_path = path_get(RARCH_PATH_CORE);
-
-      if (core_hw_render_required(core_path))
-      {
-         RARCH_ERR("[Core] \"%s\" needs a hardware rendering context, which this platform does not provide.\n",
-               core_path);
-         return false;
-      }
-   }
-
+   /* A core that asked for a hardware rendering context and was refused
+    * one is written to have the context, and running it anyway takes the
+    * core down. That is caught after the load, below: a core that
+    * offers a software renderer of its own never asks, and runs. */
    core_hw_render_set_refused(false);
 
    video_driver_cached_frame_invalidate();
@@ -10655,7 +10642,8 @@ bool core_load_game(retro_ctx_load_content_info_t *load_info)
        * takes the core down. Refuse the content here instead. */
       if (core_hw_render_get_refused() && !core_hw_render_available())
       {
-         RARCH_ERR("[Core] This core needs a hardware rendering context, which this platform does not provide.\n");
+         RARCH_ERR("[Core] This core needs a hardware rendering context, which this platform does not provide."
+               " If the core has a software renderer, choose it in the core options.\n");
          game_loaded = false;
       }
       else
