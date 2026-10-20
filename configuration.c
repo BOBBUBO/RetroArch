@@ -482,6 +482,11 @@ static const enum video_driver_enum VIDEO_DEFAULT_DRIVER = VIDEO_METAL;
 static const enum video_driver_enum VIDEO_DEFAULT_DRIVER = VIDEO_D3D11;
 #elif defined(HAVE_GXM)
 static const enum video_driver_enum VIDEO_DEFAULT_DRIVER = VIDEO_GXM;
+#elif defined(UTOUCH) && defined(HAVE_SDL2)
+/* Ubuntu Touch's compositor exposes no EGL to Wayland clients (its
+ * Wayland server implements wl_shm only), so no GL context can be
+ * created: render through SDL2's own renderer instead. */
+static const enum video_driver_enum VIDEO_DEFAULT_DRIVER = VIDEO_SDL2;
 #elif defined(HAVE_OPENGL) || defined(HAVE_OPENGLES) || defined(HAVE_PSGL)
 static const enum video_driver_enum VIDEO_DEFAULT_DRIVER = VIDEO_GL;
 #elif defined(HAVE_OPENGL_CORE) && !defined(__HAIKU__)
@@ -711,6 +716,10 @@ static const enum input_driver_enum INPUT_DEFAULT_DRIVER = INPUT_WII;
 static const enum input_driver_enum INPUT_DEFAULT_DRIVER = INPUT_WIIU;
 #elif defined(DINGUX) && defined(HAVE_SDL_DINGUX)
 static const enum input_driver_enum INPUT_DEFAULT_DRIVER = INPUT_SDL_DINGUX;
+#elif defined(UTOUCH) && defined(HAVE_SDL2)
+/* The click AppArmor policy denies /dev/input, so evdev devices are
+ * out of reach: take input through SDL2 instead. */
+static const enum input_driver_enum INPUT_DEFAULT_DRIVER = INPUT_SDL2;
 #elif defined(HAVE_X11)
 static const enum input_driver_enum INPUT_DEFAULT_DRIVER = INPUT_X;
 #elif defined(HAVE_UDEV)

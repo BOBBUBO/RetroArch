@@ -64,3 +64,11 @@ CI builds both arches on every push to master via
 
 For local use, prefer clickable: it uses the Ubuntu Touch 24.04 framework and
 its Docker image already provides the matching toolchain and libraries.
+
+### Platform limits
+
+Ubuntu Touch's compositor implements `wl_shm` only, so it hands no EGL to
+Wayland clients and an SDL2 app cannot get a GL context there. The build
+therefore defaults to SDL2's own renderer and the launcher asks SDL2 for the
+software renderer. The click AppArmor policy denies `/dev/input`, so input
+arrives through SDL2 (touch, keyboard) instead of evdev.
