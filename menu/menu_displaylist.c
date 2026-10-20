@@ -18949,7 +18949,15 @@ static bool menu_displaylist_ctl_internal(
             bool show_hidden_files                     = settings->bools.show_hidden_files;
             bool multimedia_builtin_mediaplayer_enable = settings->bools.multimedia_builtin_mediaplayer_enable;
             bool multimedia_builtin_imageviewer_enable = settings->bools.multimedia_builtin_imageviewer_enable;
+#if defined(UTOUCH)
+            /* A phone's file browser should show the user's files, not
+             * only the extensions the installed cores happen to know:
+             * with a filter in place the browser lists directories and
+             * nothing else. */
+            bool filter_supported_extensions_enable    = false;
+#else
             bool filter_supported_extensions_enable    = settings->bools.menu_navigation_browser_filter_supported_extensions_enable;
+#endif
 
             filebrowser_parse(info->list, info->path, info->exts, info->label,
                   info->type_default, type, show_hidden_files,
