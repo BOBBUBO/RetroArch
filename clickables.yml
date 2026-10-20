@@ -1,3 +1,4 @@
+clickable_minimum_required: "6"
 name: com.libretro.retroarch
 title: RetroArch
 author: RetroArch Team
@@ -6,4 +7,4 @@ framework: ubuntu-sdk-24.04
 builder: custom
 build_dir: ${ROOT}/build/${ARCH_TRIPLET}/app
 install_dir: ${BUILD_DIR}/install
-build: cd ${ROOT} && make -f Makefile.ut click CROSS_COMPILE=${ARCH_TRIPLET}- INSTALL_DIR=${INSTALL_DIR}
+build: cd ${ROOT} && make -f Makefile.ut click CROSS_COMPILE=${ARCH_TRIPLET}- INSTALL_DIR=${BUILD_DIR}/install
