@@ -1,28 +1,48 @@
 include version.all
 
-# Ubuntu Touch cross build: aarch64 (arm64) and armhf.
-# Set CROSS_COMPILE, e.g. CROSS_COMPILE=aarch64-linux-gnu-
-ifneq ($(filter aarch64-linux-gnu- arm-linux-gnueabihf-,$(CROSS_COMPILE)),$(CROSS_COMPILE))
-  $(error You need an Ubuntu cross toolchain to build this package.)
-endif
+# Ubuntu Touch build
+# Cross (CI):    make click CROSS_COMPILE=aarch64-linux-gnu-
+# Native (clickable): make click   (no CROSS_COMPILE, inside clickable Docker)
 
 ifeq ($(CROSS_COMPILE),aarch64-linux-gnu-)
   TRIPLET := aarch64-linux-gnu
   DEBIAN_ARCH := arm64
   CLICK_ARCH := arm64
   ARCHFLAGS := -mcpu=cortex-a53
-else
+  CC := $(CROSS_COMPILE)gcc
+  CXX := $(CROSS_COMPILE)g++
+else ifeq ($(CROSS_COMPILE),arm-linux-gnueabihf-)
   TRIPLET := arm-linux-gnueabihf
   DEBIAN_ARCH := armhf
   CLICK_ARCH := armhf
   ARCHFLAGS := -mcpu=cortex-a9 -mtune=cortex-a53 -mfloat-abi=hard -mfpu=neon
   HAVE_NEON := 1
+  CC := $(CROSS_COMPILE)gcc
+  CXX := $(CROSS_COMPILE)g++
+else
+  # Native build (clickable Docker or direct on device)
+  TRIPLET :=
+  DEBIAN_ARCH := $(shell dpkg --print-architecture 2>/dev/null || echo)
+  CLICK_ARCH := $(DEBIAN_ARCH)
+  ARCHFLAGS :=
+  CC := gcc
+  CXX := g++
 endif
 
 STAGING_DIR ?= /usr
 
-CC := $(CROSS_COMPILE)gcc
-CXX := $(CROSS_COMPILE)g++
+ifeq ($(TRIPLET),)
+  # Native build (clickable Docker or direct on device)
+  SYSROOT_INCLUDE := /usr/include
+  SYSROOT_LIB := /usr/lib
+  ifneq ($(DEBIAN_ARCH),)
+    SYSROOT_LIB += -L/usr/lib/$(DEBIAN_ARCH)
+  endif
+else
+  # Cross build (CI)
+  SYSROOT_INCLUDE := $(STAGING_DIR)/$(TRIPLET)/include
+  SYSROOT_LIB := -L$(STAGING_DIR)/$(TRIPLET)/lib -L$(STAGING_DIR)/$(TRIPLET)/lib/$(TRIPLET)
+endif
 
 UTOUCH = 1
 DEBUG ?= 0
@@ -157,8 +177,8 @@ CFLAGS += -DUTOUCH_APP_ID=\"$(APP_PACKAGE_NAME)\"
 CXXFLAGS := $(ARCHFLAGS) -fno-exceptions -fno-rtti -std=c++11 -D__STDC_CONSTANT_MACROS
 ASFLAGS := $(ARCHFLAGS)
 LDFLAGS := -Wl,-rpath=\$$ORIGIN/lib,--gc-sections
-INCLUDE_DIRS = -I$(STAGING_DIR)/$(TRIPLET)/include -I/usr/include
-LIBRARY_DIRS = -L$(STAGING_DIR)/$(TRIPLET)/lib -L$(STAGING_DIR)/$(TRIPLET)/lib/$(TRIPLET)
+INCLUDE_DIRS = -I$(SYSROOT_INCLUDE) -I/usr/include
+LIBRARY_DIRS = $(SYSROOT_LIB)
 DEFINES := -DRARCH_INTERNAL -D_FILE_OFFSET_BITS=64 -UHAVE_STATIC_DUMMY
 DEFINES += -DHAVE_C99=1 -DHAVE_CXX=1 -D_GNU_SOURCE
 DEFINES += -DHAVE_GETOPT_LONG=1 -DHAVE_DYNAMIC=1
@@ -187,7 +207,7 @@ endif
 ifeq ($(HAVE_SDL2),1)
   DEFINES += -DHAVE_SDL2
 endif
-SDL2_CFLAGS := -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
+SDL2_CFLAGS := -I$(SYSROOT_INCLUDE)/SDL2
 SDL2_LIBS ?= -lSDL2
 FREETYPE_LIBS ?= -lfreetype
 FREETYPE_CFLAGS ?=
@@ -217,9 +237,9 @@ DEF_FLAGS += $(INCLUDE_DIRS)
 # On Ubuntu 24.04, cross -dev packages (arm64/armhf) install headers to
 # /usr/include/ instead of the multiarch dir. Add the needed subdirs.
 CPPFLAGS += -I/usr/include/SDL2 -I/usr/include/freetype2 -I/usr/include/fontconfig \
-            -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
+            -I$(SYSROOT_INCLUDE)/SDL2
 DEF_FLAGS += -I/usr/include/SDL2 -I/usr/include/freetype2 -I/usr/include/fontconfig \
-             -I$(STAGING_DIR)/$(TRIPLET)/include/SDL2
+             -I$(SYSROOT_INCLUDE)/SDL2
 LDFLAGS += $(CFLAGS) $(CXXFLAGS) $(DEF_FLAGS)
 CFLAGS += $(DEF_FLAGS)
 CXXFLAGS += $(DEF_FLAGS)
@@ -294,24 +314,30 @@ clean:
 	$(Q)rm -rf ut/dist
 	$(Q)rm -f ut/*.click
 
+INSTALL_DIR ?= ut/dist
+
 click: $(TARGET)
-	rm -rf ut/dist
-	mkdir -p ut/dist
+	rm -rf $(INSTALL_DIR)
+	mkdir -p $(INSTALL_DIR)
 	if [ "$(DEBUG)" = "1" ]; then :; else \
 	  $(STRIP) $(TARGET); \
 	fi
-	cp $(TARGET) ut/dist/retroarch
-	chmod +x ut/dist/retroarch
-	cp ut/icon.png ut/dist/com.libretro.retroarch.png
-	cp ut/com.libretro.retroarch.desktop ut/dist/
-	cp ut/com.libretro.retroarch.apparmor ut/dist/
+	cp $(TARGET) $(INSTALL_DIR)/retroarch
+	chmod +x $(INSTALL_DIR)/retroarch
+	cp ut/icon.png $(INSTALL_DIR)/com.libretro.retroarch.png
+	cp ut/com.libretro.retroarch.desktop $(INSTALL_DIR)/
+	cp ut/com.libretro.retroarch.apparmor $(INSTALL_DIR)/
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \
 	    -e "s/@CLICK_ARCH@/$(CLICK_ARCH)/" \
-	    ut/manifest.json.in > ut/dist/manifest.json
-	cd ut/dist && tar -cf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
+	    ut/manifest.json.in > $(INSTALL_DIR)/manifest.json
+ifneq ($(INSTALL_DIR),ut/dist)
+	@echo "Click files installed in $(INSTALL_DIR)"
+else
+	cd $(INSTALL_DIR) && tar -cf ../$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click \
 	    manifest.json retroarch com.libretro.retroarch.desktop \
 	    com.libretro.retroarch.apparmor com.libretro.retroarch.png
 	@echo "Click package: ut/$(APP_PACKAGE_NAME)_$(CLICK_VERSION)_$(CLICK_ARCH).click"
+endif
 
 .PHONY: all clean click info
 
