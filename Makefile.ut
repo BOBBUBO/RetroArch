@@ -327,9 +327,15 @@ click: $(TARGET)
 	cp ut/icon.png $(INSTALL_DIR)/com.libretro.retroarch.png
 	cp ut/com.libretro.retroarch.desktop $(INSTALL_DIR)/
 	cp ut/com.libretro.retroarch.apparmor $(INSTALL_DIR)/
+ifeq ($(CLICKABLE),1)
+	# Clickable mode: use static manifest.json (clickable handles versioning)
+	cp ut/manifest.json $(INSTALL_DIR)/manifest.json
+else
+	# CI mode: sed substitute manifest.json.in
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \
 	    -e "s/@CLICK_ARCH@/$(CLICK_ARCH)/" \
 	    ut/manifest.json.in > $(INSTALL_DIR)/manifest.json
+endif
 ifneq ($(INSTALL_DIR),ut/dist)
 	@echo "Click files installed in $(INSTALL_DIR)"
 else

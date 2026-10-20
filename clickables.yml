@@ -6,7 +6,7 @@ description: RetroArch - Libretro frontend
 framework: ubuntu-sdk-24.04
 builder: custom
 build_dir: ${ROOT}
-build: make -f Makefile.ut click INSTALL_DIR=clickable-install
+build: make -f Makefile.ut click INSTALL_DIR=clickable-install CLICKABLE=1
 install_dir: ${ROOT}/clickable-install
 dependencies_target:
 - libegl1-mesa-dev
