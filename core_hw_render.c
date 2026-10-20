@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <compat/strl.h>
+#include <file/file_path.h>
+
 #include <core_hw_render.h>
 
 /* The cores that cannot run without a hardware rendering context, as a
@@ -50,6 +53,7 @@ bool core_hw_render_required(const char *core_filename)
 {
    const char *list;
    const char *name;
+   char base[256];
    size_t name_len;
 
    if (!core_filename || !*core_filename)
@@ -63,14 +67,21 @@ bool core_hw_render_required(const char *core_filename)
     * the callers have a path or a listing entry. */
    name = strrchr(core_filename, '/');
    name = name ? name + 1 : core_filename;
-   name_len = strlen(name);
+
+   strlcpy(base, name, sizeof(base));
+
+   /* A listing names the archive a core comes in, not the core. */
+   if (path_is_compressed_file(base))
+      path_remove_extension(base);
+
+   name_len = strlen(base);
 
    while (*list)
    {
       const char *end = strchr(list, ',');
       size_t item_len = end ? (size_t)(end - list) : strlen(list);
 
-      if (item_len == name_len && !strncmp(list, name, name_len))
+      if (item_len == name_len && !strncmp(list, base, name_len))
          return true;
 
       if (!end)
