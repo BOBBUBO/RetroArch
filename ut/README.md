@@ -1,10 +1,10 @@
 ## Building
 
-### With clickable (recommended)
+### With clickable (recommended for installable packages)
 
-[clickable](https://github.com/donald-666/clickable) is the standard tool for
-building Ubuntu Touch click packages. It builds inside Docker with the proper
-UT SDK, bundling all libraries so the package installs on any UT device.
+[clickable](https://clickable-ut.dev) is the standard tool for building Ubuntu
+Touch click packages. It builds inside Docker with the proper UT SDK and
+bundles all required libraries so the package installs on any UT device:
 
 ```sh
 pipx install clickable
@@ -19,17 +19,14 @@ clickable --target armhf
 clickable install
 ```
 
-Config is in `clickables.yml` at the repo root. Note: clickable builds inside
-its own Docker SDK images. If your Makefile.ut cross-toolchain paths differ
-from clickable's image, pass a custom build command:
+Project config is in `clickables.yml` at the repo root. It uses `builder: custom`
+and builds via `Makefile.ut`, installing files into clickable's install directory
+so clickable can package them into a `.click`. Runtime libraries are declared
+in `dependencies_target` (build time) and `install_lib` (bundled into the click).
 
-```sh
-clickable --build-command "make -f Makefile.ut click CROSS_COMPILE=aarch64-linux-gnu-"
-```
+### Manual cross build (CI only)
 
-### Manual cross build (CI)
-
-Without clickable, cross build on Ubuntu:
+Without clickable, cross build on Ubuntu for CI:
 
 ```sh
 make -f Makefile.ut clean CROSS_COMPILE=aarch64-linux-gnu-
@@ -49,5 +46,5 @@ CI builds both arches on every push to master via
 `.github/workflows/UbuntuTouch.yml`; artifacts are attached to the run.
 
 Note: manually built packages link against Ubuntu 24.04 system libraries and
-may be rejected by openstore on UT 24.04 devices due to library mismatch.
-Use clickable for packages that install reliably.
+may be rejected by openstore on UT 24.04 devices due to library mismatch. Use
+clickable for packages that install reliably.
