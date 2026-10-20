@@ -6428,6 +6428,19 @@ bool video_context_driver_get_metrics(gfx_ctx_metrics_t *metrics)
       return true;
    if (ctx->get_metrics)
       return ctx->get_metrics(ctx_data, metrics->type, metrics->value);
+#if defined(UTOUCH)
+   /* Ubuntu Touch's compositor does not report the panel's physical
+    * size, so no display DPI is available. Without one the menu is
+    * scaled as if for a 1080p desktop panel, which leaves the text
+    * too small on a phone, and the touch drag threshold is zero,
+    * which leaves the menu without drag scrolling. A phone panel of
+    * this class is around 400 DPI. */
+   if (metrics->type == DISPLAY_METRIC_DPI)
+   {
+      *(float*)metrics->value = 400.0f;
+      return true;
+   }
+#endif
    return false;
 }
 

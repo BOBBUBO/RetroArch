@@ -72,3 +72,12 @@ Wayland clients and an SDL2 app cannot get a GL context there. The build
 therefore defaults to SDL2's own renderer and the launcher asks SDL2 for the
 software renderer. The click AppArmor policy denies `/dev/input`, so input
 arrives through SDL2 (touch, keyboard) instead of evdev.
+
+The compositor reports no display DPI either, and without one the menu is
+scaled for a 1080p desktop panel, which leaves the text too small on a phone
+and the touch drag threshold at zero, which leaves the menu without drag
+scrolling. The build therefore reports a phone's DPI when the platform has
+none. The click package reads the user's own directories (`Documents`,
+`Downloads`, `Music`, `Pictures`, `Videos` and the SD card under `/media`) so
+the file browser can see game files; everything the app writes stays in its
+own configuration directory.

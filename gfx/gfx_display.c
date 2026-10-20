@@ -309,9 +309,17 @@ float gfx_display_get_dpi_scale(
 #ifdef HAVE_OZONE
       if (p_disp->menu_driver_id == MENU_DRIVER_ID_OZONE)
       {
+         float sidebar_max;
+#if defined(UTOUCH)
+         /* A phone held in portrait is narrow, and a third of the
+          * width there leaves the whole menu too small to read, so
+          * the sidebar may take half of it instead. */
+         sidebar_max      = (float)VIDEO_SCALE_W(dims) / 2.0f;
+#else
          /* Ozone's sidebar may take a third of the screen and no
           * more, so the scale is capped at whatever puts it there. */
-         float sidebar_max      = (float)VIDEO_SCALE_W(dims) / 3.0f;
+         sidebar_max      = (float)VIDEO_SCALE_W(dims) / 3.0f;
+#endif
          if (((float)OZONE_SIDEBAR_WIDTH * adjusted_scale)
                > sidebar_max)
             adjusted_scale      = (sidebar_max / (float)OZONE_SIDEBAR_WIDTH);
