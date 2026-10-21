@@ -1898,6 +1898,10 @@ bool config_overlay_enable_default(void)
       return g_defaults.overlay_enable;
 #if defined(RARCH_MOBILE) && !TARGET_OS_TV
    return true;
+#elif defined(UTOUCH)
+   /* A phone has no gamepad to speak of, and the click profile denies
+    * /dev/input, so the on-screen overlay is the only way to play. */
+   return true;
 #else
    return false;
 #endif

@@ -340,6 +340,7 @@ click: $(TARGET) $(LAUNCHER)
 	cp $(LAUNCHER) $(INSTALL_DIR)/retroarch-launcher
 	chmod +x $(INSTALL_DIR)/retroarch $(INSTALL_DIR)/retroarch-launcher
 	cp ut/icon.png $(INSTALL_DIR)/com.libretro.retroarch.png
+	cp -r ut/touch-overlay $(INSTALL_DIR)/overlays
 	cp ut/com.libretro.retroarch.desktop $(INSTALL_DIR)/
 	cp ut/com.libretro.retroarch.apparmor $(INSTALL_DIR)/
 	sed -e "s/@PACKAGE_VERSION@/$(CLICK_VERSION)/" \

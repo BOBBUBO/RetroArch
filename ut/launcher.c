@@ -47,6 +47,17 @@ static const struct setting_fix setting_fixes[] =
    { NULL, NULL, NULL }
 };
 
+static void copy_str(char *dst, size_t size, const char *src)
+{
+   size_t len = strlen(src);
+
+   if (len >= size)
+      len = size - 1;
+
+   memcpy(dst, src, len);
+   dst[len] = '\0';
+}
+
 static void join_path(char *dst, size_t size, const char *dir, const char *name)
 {
    size_t len      = strlen(dir);
@@ -87,9 +98,81 @@ static const struct setting_fix *find_fix(const char *line)
    return NULL;
 }
 
+/* The value of a setting in the configuration file, or NULL when it is
+ * not there. The caller owns the returned string. */
+static char *read_setting(FILE *file, const char *key)
+{
+   char line[1024];
+   size_t key_len = strlen(key);
+
+   rewind(file);
+
+   while (fgets(line, sizeof(line), file))
+   {
+      char *value;
+
+      if (strncmp(line, key, key_len) != 0)
+         continue;
+      if (strncmp(line + key_len, " = \"", 4) != 0)
+         continue;
+
+      value = line + key_len + 4;
+      value = strchr(value, '"');
+      if (!value)
+         continue;
+
+      *value = '\0';
+
+      return strdup(line + key_len + 4);
+   }
+
+   return NULL;
+}
+
+/* The directory the package is installed in: the launcher is in it, and
+ * the overlay it ships is read from there. */
+static int find_package_dir(char *out, size_t size)
+{
+   const char *path = getenv("PATH");
+   char entry[MAX_PATH_LEN];
+   char candidate[MAX_PATH_LEN];
+
+   if (!path || !*path)
+      return 0;
+
+   while (*path)
+   {
+      const char *end = strchr(path, ':');
+      size_t len = end ? (size_t)(end - path) : strlen(path);
+
+      if (len && len < sizeof(entry))
+      {
+         memcpy(entry, path, len);
+         entry[len] = '\0';
+
+         join_path(candidate, sizeof(candidate), entry, "retroarch-launcher");
+
+         if (candidate[0] && access(candidate, R_OK) == 0)
+         {
+            copy_str(out, size, entry);
+            return 1;
+         }
+      }
+
+      if (!end)
+         break;
+
+      path = end + 1;
+   }
+
+   out[0] = '\0';
+
+   return 0;
+}
+
 /* Rewrite the settings a previous install left behind that cannot work
  * here, so the app does not keep failing on its old configuration. */
-static void fix_config(const char *config_dir)
+static void fix_config(const char *config_dir, const char *package_dir)
 {
    char path[MAX_PATH_LEN];
    char tmp_path[MAX_PATH_LEN];
@@ -97,6 +180,7 @@ static void fix_config(const char *config_dir)
    FILE *out;
    char line[1024];
    int changed = 0;
+   int set_overlay = 0;
 
    join_path(path, sizeof(path), config_dir, "retroarch/retroarch.cfg");
    join_path(tmp_path, sizeof(tmp_path), config_dir,
@@ -109,12 +193,26 @@ static void fix_config(const char *config_dir)
    if (!in)
       return;
 
+   /* An overlay that is not set is the one the package ships: the
+    * touch controls are the only way to play here. */
+   if (package_dir && *package_dir)
+   {
+      char *overlay = read_setting(in, "input_overlay");
+
+      if (overlay && !*overlay)
+         set_overlay = 1;
+
+      free(overlay);
+   }
+
    out = fopen(tmp_path, "w");
    if (!out)
    {
       fclose(in);
       return;
    }
+
+   rewind(in);
 
    while (fgets(line, sizeof(line), in))
    {
@@ -123,6 +221,27 @@ static void fix_config(const char *config_dir)
       if (fix)
       {
          fprintf(out, "%s = \"%s\"\n", fix->key, fix->to);
+         changed = 1;
+      }
+      else if (set_overlay && strncmp(line, "input_overlay = \"", 17) == 0)
+      {
+         char overlay_path[MAX_PATH_LEN];
+
+         join_path(overlay_path, sizeof(overlay_path), package_dir,
+               "overlays/snes.cfg");
+
+         if (overlay_path[0])
+         {
+            fprintf(out, "input_overlay = \"%s\"\n", overlay_path);
+            changed = 1;
+         }
+         else
+            fputs(line, out);
+      }
+      else if (set_overlay
+            && strncmp(line, "input_overlay_enable = \"", 24) == 0)
+      {
+         fprintf(out, "input_overlay_enable = \"true\"\n");
          changed = 1;
       }
       else
@@ -142,8 +261,12 @@ int main(int argc, char **argv)
 {
    const char *home = getenv("HOME");
    char config[MAX_PATH_LEN];
+   char package_dir[MAX_PATH_LEN];
 
    (void)argc;
+
+   package_dir[0] = '\0';
+   find_package_dir(package_dir, sizeof(package_dir));
 
    /* Click profiles cannot execute /usr/bin/env; set the config dir here. */
    if (home && *home)
@@ -158,7 +281,7 @@ int main(int argc, char **argv)
          memcpy(config, home, len);
          memcpy(config + len, suffix, sizeof(suffix));
          setenv("XDG_CONFIG_HOME", config, 1);
-         fix_config(config);
+         fix_config(config, package_dir);
       }
 
       /* PulseAudio keeps the client cookie in the user's own
